@@ -1,17 +1,6 @@
 import { Paper, Title, Text, Group, Stack, Badge, Button } from "@mantine/core";
-import type { Job } from "../api/jobsApi";
-
-const spaceLabels: Record<Job["space"], string> = {
-  remote: "Можно удалённо",
-  office: "Офис",
-  hybrid: "Гибрид",
-};
-
-const spaceColors: Record<Job["space"], string> = {
-  remote: "green",
-  office: "orange",
-  hybrid: "violet",
-};
+import type { Job } from "../../api/jobsApi";
+import { spaceLabels, spaceColors } from "./constants";
 
 interface VacancyCardProps {
   job: Job;
@@ -45,7 +34,7 @@ export function VacancyCard({ job }: VacancyCardProps) {
             <Text fw={400} c="#0F0F10">
               {Number(job.salary).toLocaleString("ru-RU")} ₽
             </Text>
-            <Text c="dimmed">{job.experience}</Text>
+            <Text c="dimmed">Опыт {job.experience}</Text>
           </Group>
         </div>
       </Group>

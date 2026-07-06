@@ -1,6 +1,5 @@
 import { AppShell } from '@mantine/core'
-import { Header } from './components/Header'
-import { VacancyList } from './components/VacancyList'
+import { Header, VacancyList } from '@components/index'
 
 function App() {
   return (
