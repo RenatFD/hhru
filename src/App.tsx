@@ -1,5 +1,6 @@
+import { Routes, Route, Navigate } from 'react-router-dom'
 import { AppShell } from '@mantine/core'
-import { Header, VacancyList } from '@components/index'
+import { Header, VacancyList, VacancyDetail } from '@components/index'
 
 function App() {
   return (
@@ -8,7 +9,11 @@ function App() {
         <Header />
       </AppShell.Header>
       <AppShell.Main>
-        <VacancyList />
+        <Routes>
+          <Route path="/" element={<Navigate to="/vacancies" replace />} />
+          <Route path="/vacancies" element={<VacancyList />} />
+          <Route path="/vacancies/:id" element={<VacancyDetail />} />
+        </Routes>
       </AppShell.Main>
     </AppShell>
   )

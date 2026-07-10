@@ -1,5 +1,6 @@
-import { useEffect, useState, useCallback, useMemo } from "react";
+import { useEffect, useLayoutEffect, useState, useCallback, useMemo } from "react";
 import type { KeyboardEvent } from "react";
+import { useSearchParams } from "react-router-dom";
 import {
   Container,
   TextInput,
@@ -24,6 +25,7 @@ import {
   setCity,
   addSkill,
   removeSkill,
+  setSkills,
   setCurrentPage,
 } from "../../store/jobsSlice";
 import { VacancyCard } from "../VacancyCard/VacancyCard";
@@ -43,6 +45,47 @@ export function VacancyList() {
 
   const [searchInput, setSearchInput] = useState(search);
   const [newSkill, setNewSkill] = useState("");
+
+  const [searchParams, setSearchParams] = useSearchParams();
+
+  useLayoutEffect(() => {
+    const searchFromUrl = searchParams.get("search") || "";
+    const cityFromUrl = searchParams.get("city") || "";
+    const skillsFromUrl = searchParams.get("skills") || "";
+
+    if (searchFromUrl !== search) {
+      dispatch(setSearch(searchFromUrl));
+      setSearchInput(searchFromUrl);
+    }
+    if (cityFromUrl !== city) {
+      dispatch(setCity(cityFromUrl));
+    }
+    const skillsArr = skillsFromUrl
+      ? skillsFromUrl.split(",").filter(Boolean)
+      : [];
+    if (skillsFromUrl !== skills.join(",")) {
+      dispatch(setSkills(skillsArr));
+    }
+  }, [searchParams]);
+
+  useEffect(() => {
+    const params: Record<string, string> = {};
+    if (search) params.search = search;
+    if (city) params.city = city;
+    if (skills.length > 0) params.skills = skills.join(",");
+
+    const newParamsStr = new URLSearchParams(params).toString();
+    const current = new URLSearchParams();
+    for (const [key, value] of searchParams.entries()) {
+      if (key === "search" || key === "city" || key === "skills") {
+        current.set(key, value);
+      }
+    }
+
+    if (newParamsStr !== current.toString()) {
+      setSearchParams(params, { replace: true });
+    }
+  }, [search, city, skills]);
 
   const cityOptions = useMemo(() => {
     const cities = [...new Set(jobs.map((j) => j.city).filter(Boolean))].sort();

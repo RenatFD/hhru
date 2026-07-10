@@ -1,3 +1,4 @@
+import { Link } from "react-router-dom";
 import { Paper, Title, Text, Group, Stack, Badge, Button } from "@mantine/core";
 import type { Job } from "../../api/jobsApi";
 import { spaceLabels, spaceColors } from "./constants";
@@ -51,7 +52,13 @@ export function VacancyCard({ job }: VacancyCardProps) {
       </Stack>
 
       <Group justify="space-between" align="center" >
-        <Button  color="#FFFFFF" size="sm" style={{background: "#0F0F10", fontWeight: 400}}>
+        <Button
+          component={Link}
+          to={`/vacancies/${job.id}`}
+          color="#FFFFFF"
+          size="sm"
+          style={{ background: "#0F0F10", fontWeight: 400 }}
+        >
           Смотреть вакансию
         </Button>
       </Group>

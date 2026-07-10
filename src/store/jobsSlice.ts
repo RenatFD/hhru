@@ -1,8 +1,6 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit'
 import type { PayloadAction } from '@reduxjs/toolkit'
-import { fetchJobs, type Job, type JobsParams } from '../api/jobsApi'
-
-const DEFAULT_SKILLS = 'JavaScript,React,Redux,Python'
+import { fetchJobs, fetchJob, type Job, type JobDetail, type JobsParams } from '../api/jobsApi'
 
 interface JobsState {
   jobs: Job[]
@@ -13,6 +11,9 @@ interface JobsState {
   search: string
   city: string
   skills: string[]
+  jobDetail: JobDetail | null
+  jobDetailLoading: boolean
+  jobDetailError: string | null
 }
 
 const initialState: JobsState = {
@@ -23,13 +24,24 @@ const initialState: JobsState = {
   error: null,
   search: '',
   city: '',
-  skills: DEFAULT_SKILLS.split(','),
+  skills: [],
+  jobDetail: null,
+  jobDetailLoading: false,
+  jobDetailError: null,
 }
 
 export const loadJobs = createAsyncThunk(
   'jobs/loadJobs',
   async (params: JobsParams) => {
     const response = await fetchJobs(params)
+    return response
+  },
+)
+
+export const loadJob = createAsyncThunk(
+  'jobs/loadJob',
+  async (id: number) => {
+    const response = await fetchJob(id)
     return response
   },
 )
@@ -53,6 +65,9 @@ export const jobsSlice = createSlice({
     removeSkill(state, action: PayloadAction<string>) {
       state.skills = state.skills.filter((s) => s !== action.payload)
     },
+    setSkills(state, action: PayloadAction<string[]>) {
+      state.skills = action.payload
+    },
     setCurrentPage(state, action: PayloadAction<number>) {
       state.currentPage = action.payload
     },
@@ -73,9 +88,21 @@ export const jobsSlice = createSlice({
         state.loading = false
         state.error = action.error.message || 'Ошибка загрузки'
       })
+      .addCase(loadJob.pending, (state) => {
+        state.jobDetailLoading = true
+        state.jobDetailError = null
+      })
+      .addCase(loadJob.fulfilled, (state, action) => {
+        state.jobDetailLoading = false
+        state.jobDetail = action.payload.job
+      })
+      .addCase(loadJob.rejected, (state, action) => {
+        state.jobDetailLoading = false
+        state.jobDetailError = action.error.message || 'Ошибка загрузки вакансии'
+      })
   },
 })
 
-export const { setSearch, setCity, addSkill, removeSkill, setCurrentPage } =
+export const { setSearch, setCity, addSkill, removeSkill, setSkills, setCurrentPage } =
   jobsSlice.actions
 export default jobsSlice.reducer
