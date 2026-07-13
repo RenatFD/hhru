@@ -10,13 +10,14 @@ import {
   Badge,
   Loader,
   Center,
-  Alert,
   Button,
   Box,
 } from "@mantine/core";
 import { useAppDispatch, useAppSelector } from "../../store/hooks";
 import { loadJob } from "../../store/jobsSlice";
 import { spaceLabels, spaceColors } from "../VacancyCard/constants";
+
+import { NotFound } from "../NotFound/NotFound";
 
 export function VacancyDetail() {
   const { id } = useParams<{ id: string }>();
@@ -25,9 +26,14 @@ export function VacancyDetail() {
     (state) => state.jobs,
   );
 
+  const numericId = Number(id);
+  if (isNaN(numericId)) {
+    return <NotFound />;
+  }
+
   useEffect(() => {
     if (id) {
-      dispatch(loadJob(Number(id)));
+      dispatch(loadJob(numericId));
     }
   }, [dispatch, id]);
 
@@ -40,13 +46,7 @@ export function VacancyDetail() {
   }
 
   if (jobDetailError) {
-    return (
-      <Container py="xl">
-        <Alert color="red" title="Ошибка">
-          {jobDetailError}
-        </Alert>
-      </Container>
-    );
+    return <NotFound />;
   }
 
   if (!jobDetail) {

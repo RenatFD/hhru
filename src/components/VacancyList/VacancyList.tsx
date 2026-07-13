@@ -1,10 +1,10 @@
-import { useEffect, useLayoutEffect, useState, useCallback, useMemo } from "react";
+import { useEffect, useLayoutEffect, useState, useCallback } from "react";
 import type { KeyboardEvent } from "react";
-import { useSearchParams } from "react-router-dom";
+import { useSearchParams, useLocation, useNavigate } from "react-router-dom";
 import {
   Container,
   TextInput,
-  Select,
+  Tabs,
   Group,
   Stack,
   Pill,
@@ -47,18 +47,21 @@ export function VacancyList() {
   const [newSkill, setNewSkill] = useState("");
 
   const [searchParams, setSearchParams] = useSearchParams();
+  const location = useLocation();
+  const navigate = useNavigate();
+
+  const CITY_BY_SLUG: Record<string, string> = {
+    moscow: "Москва",
+    petersburg: "Санкт-Петербург",
+  };
 
   useLayoutEffect(() => {
     const searchFromUrl = searchParams.get("search") || "";
-    const cityFromUrl = searchParams.get("city") || "";
     const skillsFromUrl = searchParams.get("skills") || "";
 
     if (searchFromUrl !== search) {
       dispatch(setSearch(searchFromUrl));
       setSearchInput(searchFromUrl);
-    }
-    if (cityFromUrl !== city) {
-      dispatch(setCity(cityFromUrl));
     }
     const skillsArr = skillsFromUrl
       ? skillsFromUrl.split(",").filter(Boolean)
@@ -69,15 +72,24 @@ export function VacancyList() {
   }, [searchParams]);
 
   useEffect(() => {
+    const slug = location.pathname.includes("/petersburg")
+      ? "petersburg"
+      : "moscow";
+    const cityFromPath = CITY_BY_SLUG[slug] || "";
+    if (cityFromPath !== city) {
+      dispatch(setCity(cityFromPath));
+    }
+  }, [location.pathname]);
+
+  useEffect(() => {
     const params: Record<string, string> = {};
     if (search) params.search = search;
-    if (city) params.city = city;
     if (skills.length > 0) params.skills = skills.join(",");
 
     const newParamsStr = new URLSearchParams(params).toString();
     const current = new URLSearchParams();
     for (const [key, value] of searchParams.entries()) {
-      if (key === "search" || key === "city" || key === "skills") {
+      if (key === "search" || key === "skills") {
         current.set(key, value);
       }
     }
@@ -85,15 +97,7 @@ export function VacancyList() {
     if (newParamsStr !== current.toString()) {
       setSearchParams(params, { replace: true });
     }
-  }, [search, city, skills]);
-
-  const cityOptions = useMemo(() => {
-    const cities = [...new Set(jobs.map((j) => j.city).filter(Boolean))].sort();
-    return [
-      { value: "", label: "Все" },
-      ...cities.map((c) => ({ value: c, label: c })),
-    ];
-  }, [jobs]);
+  }, [search, skills]);
 
   const buildParams = useCallback(
     (page: number) => ({
@@ -111,10 +115,6 @@ export function VacancyList() {
 
   const handleSearchSubmit = () => {
     dispatch(setSearch(searchInput));
-  };
-
-  const handleCityChange = (value: string | null) => {
-    dispatch(setCity(value || ""));
   };
 
   const handlePageChange = (page: number) => {
@@ -217,6 +217,25 @@ export function VacancyList() {
 
       <Box style={{ maxWidth: 1200, margin: "0 auto", padding: "24px 0" }}>
         <Container px={0}>
+          <Box
+            style={{
+              marginBottom: 24,
+              display: "flex",
+              justifyContent: "center",
+            }}
+          >
+            <Tabs
+              value={location.pathname.includes("/petersburg") ? "petersburg" : "moscow"}
+              onChange={(value) => value && navigate(`/vacancies/${value}`)}
+              style={{ width: 230 }}
+            >
+              <Tabs.List style={{ borderBottomWidth: 1 }}>
+                <Tabs.Tab value="moscow">Москва</Tabs.Tab>
+                <Tabs.Tab value="petersburg">Санкт-Петербург</Tabs.Tab>
+              </Tabs.List>
+            </Tabs>
+          </Box>
+
           <Group align="flex-start" gap="lg" wrap="wrap">
             <Stack
               gap={12}
@@ -278,54 +297,6 @@ export function VacancyList() {
                   </Stack>
                 </Stack>
               </Paper>
-              <Box
-                style={{
-                  width: "100%",
-                  maxWidth: 317,
-                  height: 84,
-                  background: "#fff",
-                  borderRadius: 12,
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                }}
-              >
-                <Select
-                  placeholder="Все города"
-                  data={cityOptions}
-                  value={city || null}
-                  onChange={handleCityChange}
-                  clearable
-                  searchable
-                  style={{ width: "clamp(200px, 80%, 269px)", height: 36 }}
-                  leftSection={
-                    <svg
-                      width="16"
-                      height="16"
-                      viewBox="0 0 16 16"
-                      fill="none"
-                      xmlns="http://www.w3.org/2000/svg"
-                    >
-                      <path
-                        d="M8.00008 9.33338C9.10465 9.33338 10.0001 8.43795 10.0001 7.33338C10.0001 6.22881 9.10465 5.33338 8.00008 5.33338C6.89551 5.33338 6.00008 6.22881 6.00008 7.33338C6.00008 8.43795 6.89551 9.33338 8.00008 9.33338Z"
-                        stroke="#0F0F10"
-                        stroke-opacity="0.3"
-                        stroke-width="2"
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                      />
-                      <path
-                        d="M11.7714 11.1047L8.94275 13.9334C8.69274 14.1831 8.35381 14.3234 8.00042 14.3234C7.64703 14.3234 7.30809 14.1831 7.05808 13.9334L4.22875 11.1047C3.4829 10.3588 2.97497 9.40852 2.76921 8.37396C2.56344 7.3394 2.66908 6.26706 3.07275 5.29254C3.47643 4.31801 4.16002 3.48508 5.03707 2.89905C5.91413 2.31303 6.94526 2.00024 8.00008 2.00024C9.05491 2.00024 10.086 2.31303 10.9631 2.89905C11.8402 3.48508 12.5237 4.31801 12.9274 5.29254C13.3311 6.26706 13.4367 7.3394 13.231 8.37396C13.0252 9.40852 12.5173 10.3588 11.7714 11.1047Z"
-                        stroke="#0F0F10"
-                        stroke-opacity="0.3"
-                        stroke-width="2"
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                      />
-                    </svg>
-                  }
-                />
-              </Box>
             </Stack>
             <div style={{ flex: 1, minWidth: 0 }}>
               {loading && (
