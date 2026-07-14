@@ -1,13 +1,16 @@
 import { Container, Group, Text } from "@mantine/core";
-import { NavLink } from "react-router-dom";
+import { useMatch, Link } from "react-router-dom";
 import hhLogo from "../../assets/hh.png";
 import { profileIcon } from "./constants";
 
 export function Header() {
-  const linkStyle = (isActive: boolean): React.CSSProperties => ({
+  const isVacancies = useMatch("/vacancies/*");
+  const isAbout = useMatch("/about");
+
+  const linkStyle = (active: boolean): React.CSSProperties => ({
     fontWeight: 500,
     fontSize: 14,
-    color: isActive ? '#4263EB' : '#000000',
+    color: active ? '#4263EB' : '#0F0F1080',
     textDecoration: 'none',
   });
 
@@ -22,25 +25,16 @@ export function Header() {
         </Group>
         <Group justify="center" style={{ flex: 1 }}>
           <Group gap={8} align="center">
-            <NavLink
-              to="/vacancies"
-              style={({ isActive }) => linkStyle(isActive)}
-            >
+            <Link to="/vacancies" style={linkStyle(!!isVacancies)}>
               Вакансии FE
-            </NavLink>
+            </Link>
             <Text c="#4263EB" style={{ lineHeight: 1 }}>•</Text>
           </Group>
           <Group gap={6} align="center">
             {profileIcon}
-            <NavLink
-              to="/about"
-              style={({ isActive }) => ({
-                ...linkStyle(isActive),
-                color: isActive ? '#4263EB' : '#0F0F1080',
-              })}
-            >
+            <Link to="/about" style={linkStyle(!!isAbout)}>
               Обо мне
-            </NavLink>
+            </Link>
           </Group>
         </Group>
       </Group>
