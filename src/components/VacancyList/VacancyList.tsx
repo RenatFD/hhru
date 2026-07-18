@@ -29,6 +29,7 @@ import {
   setCurrentPage,
 } from "../../store/jobsSlice";
 import { VacancyCard } from "../VacancyCard/VacancyCard";
+import styles from "./VacancyList.module.css";
 
 export function VacancyList() {
   const dispatch = useAppDispatch();
@@ -84,7 +85,7 @@ export function VacancyList() {
   useEffect(() => {
     const params: Record<string, string> = {};
     if (search) params.search = search;
-    if (skills.length > 0) params.skills = skills.join(",");
+    if (skills.length) params.skills = skills.join(",");
 
     const newParamsStr = new URLSearchParams(params).toString();
     const current = new URLSearchParams();
@@ -103,7 +104,7 @@ export function VacancyList() {
     (page: number) => ({
       search: search || undefined,
       city: city || undefined,
-      skills: skills.length > 0 ? skills.join(",") : undefined,
+      skills: skills.length ? skills.join(",") : undefined,
       page,
     }),
     [search, city, skills],
@@ -143,30 +144,12 @@ export function VacancyList() {
 
   return (
     <>
-      <Box
-        style={{
-          margin: "0 auto",
-          maxWidth: 1200,
-          padding: "16px 0",
-          minHeight: 114,
-        }}
-      >
+      <Box className={styles.heroBox}>
         <Container px={0}>
           <Group justify="space-between" align="center" wrap="wrap">
-            <Box style={{ fontFamily: "Open Sans, sans-serif" }}>
-              <div
-                style={{ fontWeight: 700, fontSize: "clamp(20px, 5vw, 26px)" }}
-              >
-                Список вакансий
-              </div>
-              <div
-                style={{
-                  fontWeight: 500,
-                  fontSize: "clamp(16px, 4vw, 20px)",
-                  lineHeight: "135%",
-                  color: "#0F0F1080",
-                }}
-              >
+            <Box>
+              <div className={styles.heroTitle}>Список вакансий</div>
+              <div className={styles.heroSubtitle}>
                 по профессии Frontend-разработчик
               </div>
             </Box>
@@ -174,7 +157,7 @@ export function VacancyList() {
               gap={12}
               align="center"
               wrap="wrap"
-              style={{ width: "auto" }}
+              className={styles.searchGroup}
             >
               <TextInput
                 placeholder="Должность или название компании"
@@ -185,22 +168,18 @@ export function VacancyList() {
                 }}
                 onBlur={handleSearchSubmit}
                 size="md"
-                style={{ width: "clamp(200px, 50vw, 400px)" }}
+                className={styles.searchInput}
                 leftSection={
                   <svg
+                    xmlns="http://www.w3.org/2000/svg"
                     width="16"
                     height="16"
-                    viewBox="0 0 16 16"
                     fill="none"
-                    xmlns="http://www.w3.org/2000/svg"
                   >
                     <path
-                      d="M14 14L10 10M11.3333 6.66667C11.3333 9.244 9.244 11.3333 6.66667 11.3333C4.08934 11.3333 2 9.244 2 6.66667C2 4.08934 4.08934 2 6.66667 2C9.244 2 11.3333 4.08934 11.3333 6.66667Z"
-                      stroke="#0F0F10"
-                      stroke-opacity="0.3"
-                      strokeWidth="2"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
+                      stroke="#0f0f10"
+                      stroke-opacity=".3"
+                      d="m14 14-4-4m1.333-3.333a4.667 4.667 0 1 1-9.333 0 4.667 4.667 0 0 1 9.333 0Z"
                     />
                   </svg>
                 }
@@ -213,23 +192,21 @@ export function VacancyList() {
         </Container>
       </Box>
 
-      <Box style={{ borderBottom: "1px solid #0F0F1033", width: "100%" }} />
+      <Box className={styles.divider} />
 
-      <Box style={{ maxWidth: 1200, margin: "0 auto", padding: "24px 0" }}>
+      <Box className={styles.contentBox}>
         <Container px={0}>
-          <Box
-            style={{
-              marginBottom: 24,
-              display: "flex",
-              justifyContent: "center",
-            }}
-          >
+          <Box className={styles.tabsWrapper}>
             <Tabs
-              value={location.pathname.includes("/petersburg") ? "petersburg" : "moscow"}
+              value={
+                location.pathname.includes("/petersburg")
+                  ? "petersburg"
+                  : "moscow"
+              }
               onChange={(value) => value && navigate(`/vacancies/${value}`)}
-              style={{ width: 230 }}
+              className={styles.tabs}
             >
-              <Tabs.List style={{ borderBottomWidth: 1 }}>
+              <Tabs.List className={styles.tabsList}>
                 <Tabs.Tab value="moscow">Москва</Tabs.Tab>
                 <Tabs.Tab value="petersburg">Санкт-Петербург</Tabs.Tab>
               </Tabs.List>
@@ -237,10 +214,7 @@ export function VacancyList() {
           </Box>
 
           <Group align="flex-start" gap="lg" wrap="wrap">
-            <Stack
-              gap={12}
-              style={{ width: "clamp(200px, 100%, 317px)", flexShrink: 0 }}
-            >
+            <Stack gap={12} className={styles.sidebar}>
               <Paper radius={12} p={24}>
                 <Stack gap={12}>
                   <Text fw={600} size="sm" mb={8}>
@@ -258,25 +232,20 @@ export function VacancyList() {
                       w={36}
                       h={36}
                       onClick={handleAddSkill}
-                      style={{
-                        gap: 10,
-                        opacity: 1,
-                        borderRadius: 8,
-                        padding: 4,
-                      }}
+                      className={styles.addButton}
                     >
                       <svg
-                        viewBox="0 0 34 30"
-                        fill="none"
                         xmlns="http://www.w3.org/2000/svg"
+                        fill="none"
+                        viewBox="0 0 34 30"
                       >
-                        <rect width="34" height="30" rx="8" fill="#228BE6" />
+                        <rect width="34" height="30" fill="#228be6" rx="8" />
                         <path
-                          d="M17.0001 7.41675V22.5834M9.41675 15.0001H24.5834"
-                          stroke="white"
-                          stroke-width="2"
+                          stroke="#fff"
                           stroke-linecap="round"
                           stroke-linejoin="round"
+                          stroke-width="2"
+                          d="M17 7.417v15.166M9.417 15h15.166"
                         />
                       </svg>
                     </ActionIcon>
@@ -298,7 +267,7 @@ export function VacancyList() {
                 </Stack>
               </Paper>
             </Stack>
-            <div style={{ flex: 1, minWidth: 0 }}>
+            <div className={styles.mainContent}>
               {loading && (
                 <Center py="xl">
                   <Loader />

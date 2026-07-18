@@ -1,0 +1,26 @@
+.wrapper {
+  max-width: 773px;
+  margin: 0 auto;
+  padding: 24px 0;
+}
+
+.backButton {
+  align-self: flex-start;
+  padding: 0;
+}
+
+.jobTitle {
+  font-weight: 600;
+  font-size: clamp(20px, 5vw, 28px);
+  color: #364FC7;
+}
+
+.textBody {
+  font-weight: 400;
+  font-size: 16px;
+  line-height: 24px;
+}
+
+.preWrap {
+  white-space: pre-wrap;
+}

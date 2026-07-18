@@ -1,0 +1,68 @@
+.heroBox {
+  margin: 0 auto;
+  max-width: 1200px;
+  padding: 16px 0;
+  min-height: 114px;
+}
+
+.heroTitle {
+  font-weight: 700;
+  font-size: clamp(20px, 5vw, 26px);
+}
+
+.heroSubtitle {
+  font-weight: 500;
+  font-size: clamp(16px, 4vw, 20px);
+  line-height: 135%;
+  color: #0F0F1080;
+}
+
+.searchGroup {
+  width: auto;
+}
+
+.searchInput {
+  width: clamp(200px, 50vw, 400px);
+}
+
+.divider {
+  border-bottom: 1px solid #0F0F1033;
+  width: 100%;
+}
+
+.contentBox {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 24px 0;
+}
+
+.tabsWrapper {
+  margin-bottom: 24px;
+  display: flex;
+  justify-content: center;
+}
+
+.tabs {
+  width: 230px;
+}
+
+.tabsList {
+  border-bottom-width: 1px;
+}
+
+.sidebar {
+  width: clamp(200px, 100%, 317px);
+  flex-shrink: 0;
+}
+
+.addButton {
+  gap: 10px;
+  opacity: 1;
+  border-radius: 8px;
+  padding: 4px;
+}
+
+.mainContent {
+  flex: 1;
+  min-width: 0;
+}

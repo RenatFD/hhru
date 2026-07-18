@@ -1,0 +1,22 @@
+.stack {
+  width: 707px;
+  padding: 32px;
+  border-radius: 12px;
+  background: #FFFFFF;
+}
+
+.title {
+  font-weight: 700;
+  font-size: 34px;
+  line-height: 130%;
+}
+
+.button {
+  flex-shrink: 0;
+}
+
+.text {
+  font-weight: 400;
+  font-size: 18px;
+  line-height: 24px;
+}

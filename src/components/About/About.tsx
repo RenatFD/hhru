@@ -1,4 +1,5 @@
 import { Container, Title, Text, Paper } from '@mantine/core'
+import styles from './About.module.css'
 
 export function About() {
   return (
@@ -6,24 +7,11 @@ export function About() {
       <Paper radius={12} p={32} withBorder>
         <Title
           order={2}
-          style={{
-            fontFamily: 'Open Sans, sans-serif',
-            fontWeight: 700,
-            fontSize: 26,
-            lineHeight: '135%',
-            marginBottom: 16,
-          }}
+          className={styles.title}
         >
           Криштиану Рональдаа душ Сантуш Авейру
         </Title>
-        <Text
-          style={{
-            fontFamily: 'Open Sans, sans-serif',
-            fontWeight: 400,
-            fontSize: 16,
-            lineHeight: '24px',
-          }}
-        >
+        <Text className={styles.text}>
           Привет! Я — Frontend-разработчик. Пишу приложения на React + TypeScript + Redux Toolkit.<br />
           Завязал с футбиком после чм
         </Text>
